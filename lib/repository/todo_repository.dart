@@ -6,7 +6,7 @@ class TodoRepository {
   Future<List<TodoModel>> getTodoList(String? search) async {
     int statusCode = 200;
 
-    await Future.delayed(const Duration(milliseconds: 100));
+    await Future.delayed(const Duration(seconds: 2));
 
     if (statusCode == 200) {
       if (search == null) {
@@ -22,6 +22,8 @@ class TodoRepository {
   }
 
   Future<void> addTodo(TodoModel todo) async {
+    await Future.delayed(const Duration(milliseconds: 1000));
+
     return todoList.add(todo);
   }
 
@@ -30,7 +32,7 @@ class TodoRepository {
   }
 
   Future<void> deleteTodo(int id) async {
-    await Future.delayed(const Duration(milliseconds: 100));
+    await Future.delayed(const Duration(milliseconds: 1000));
 
     return todoList.removeWhere((e) => e.id == id);
   }

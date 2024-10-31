@@ -1,6 +1,8 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_bloc/bloc/todo_event.dart';
 import 'package:test_bloc/bloc/todo_state.dart';
+import 'package:test_bloc/main.dart';
 import 'package:test_bloc/model/todo_model.dart';
 import 'package:test_bloc/repository/todo_repository.dart';
 
@@ -16,7 +18,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
 
   _fetchTodo(Emitter emit) async {
     try {
-      emit(TodoInitial());
+      emit(TodoLoading());
 
       emit(TodoLoaded(todoList: _todoRepository.todoList));
     } catch (e) {
@@ -26,7 +28,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
 
   searchTodo(Emitter emit, String? search) async {
     try {
-      emit(TodoInitial());
+      emit(TodoLoading());
 
       final todoList = await _todoRepository.getTodoList(search);
 
@@ -36,11 +38,15 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
     }
   }
 
-  addTodo(Emitter emit, TodoModel todo) {
+  Future<void> addTodo(Emitter emit, TodoModel todo) async {
     try {
-      _todoRepository.addTodo(todo);
+      emit(TodoLoading());
 
-      _fetchTodo(emit);
+      await _todoRepository.addTodo(todo);
+
+      await _fetchTodo(emit);
+
+      Navigator.pop(navigatorKey.currentContext!);
     } catch (e) {
       emit(TodoError(e.toString()));
     }
@@ -58,6 +64,8 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
 
   deleteTodo(Emitter emit, int id) async {
     try {
+      emit(TodoLoading());
+
       await _todoRepository.deleteTodo(id);
 
       _fetchTodo(emit);

@@ -8,6 +8,8 @@ import 'package:test_bloc/presentation/todo_list_screen.dart';
 import 'package:test_bloc/repository/todo_repository.dart';
 import 'package:test_bloc/simple_bloc_observer.dart';
 
+final navigatorKey = GlobalKey<NavigatorState>();
+
 void main() {
   runApp(const MyApp());
 }
@@ -18,13 +20,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        navigatorKey: navigatorKey,
         title: 'Flutter Demo',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: BlocProvider(
-          create: (_) => TodoBloc(TodoRepository())..add(FetchTodoList()),
+        home: MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (_) => TodoBloc(TodoRepository())..add(FetchTodoList()),
+            )
+          ],
           child: const TodoListScreen(),
         )
         /*

@@ -4,6 +4,7 @@ import 'package:test_bloc/bloc/todo_bloc.dart';
 import 'package:test_bloc/bloc/todo_event.dart';
 import 'package:test_bloc/bloc/todo_state.dart';
 import 'package:test_bloc/model/todo_model.dart';
+import 'package:test_bloc/presentation/todo_create.dart';
 
 class TodoListScreen extends StatefulWidget {
   const TodoListScreen({super.key});
@@ -109,7 +110,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => create(),
+        onPressed: () => create(context),
       ),
     );
   }
@@ -118,13 +119,14 @@ class _TodoListScreenState extends State<TodoListScreen> {
     context.read<TodoBloc>().add(SearchTodoList(searchController.text));
   }
 
-  create() {
-    final todo = TodoModel(
-      id: DateTime.now().microsecondsSinceEpoch,
-      todo: DateTime.now().toString(),
+  create(BuildContext ctx) {
+    showDialog(
+      context: context,
+      builder: (context) => BlocProvider.value(
+        value: ctx.read<TodoBloc>(),
+        child: const TodoCreate(),
+      ),
     );
-
-    context.read<TodoBloc>().add(TodoAdd(todo));
   }
 
   update(TodoModel todo) {
